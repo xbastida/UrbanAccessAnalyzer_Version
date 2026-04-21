@@ -27,6 +27,8 @@ __pycache__/
 *.dbf
 *.prj
 *.cpg
+.claude.md
+cache/
 
 # Virtual environment
 .venv/
