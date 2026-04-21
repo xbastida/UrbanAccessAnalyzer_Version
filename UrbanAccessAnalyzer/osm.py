@@ -376,7 +376,9 @@ def download_street_graph(
     return G
 
 
-def overpass_api_query(query: str, bounds: gpd.GeoDataFrame | gpd.GeoSeries):
+def overpass_api_query(query: str, bounds: gpd.GeoDataFrame | gpd.GeoSeries, timeout: int = 60, retries: int = 2):
+    import time
+
     bbox = bounds.to_crs(4326).total_bounds
     bbox = f"{bbox[1]},{bbox[0]},{bbox[3]},{bbox[2]}"
     query = query.replace("{{bbox}}", bbox)
@@ -386,14 +388,43 @@ def overpass_api_query(query: str, bounds: gpd.GeoDataFrame | gpd.GeoSeries):
     overpass_urls = [
         "https://overpass-api.de/api/interpreter",
         "https://lz4.overpass-api.de/api/interpreter",
-        "https://overpass.kumi.systems/api/interpreter"
+        "https://overpass.kumi.systems/api/interpreter",
     ]
-    for url in overpass_urls:
-        response = requests.get(url, params={"data": query})
-        if response.status_code == 200 and response.text.strip():
-            break
+    last_error = None
+    for attempt in range(retries):
+        for url in overpass_urls:
+            try:
+                response = requests.post(url, data={"data": query}, timeout=timeout)
+                if response.status_code == 200 and response.text.strip():
+                    print(f"Overpass API response from {url} (attempt {attempt + 1})")
+                    break
+                else:
+                    # Extract the plain-text error from the Overpass HTML response
+                    import re
+                    error_msgs = re.findall(r"<p><strong[^>]*>Error</strong>: (.*?)</p>", response.text)
+                    if error_msgs:
+                        snippet = "; ".join(error_msgs)
+                    else:
+                        snippet = response.text[:400].strip() if response.text else "<empty>"
+                    print(f"  [{url}] HTTP {response.status_code}: {snippet}")
+                    last_error = f"HTTP {response.status_code} from {url}: {snippet}"
+            except requests.exceptions.Timeout:
+                print(f"  [{url}] Request timed out after {timeout}s")
+                last_error = f"Timeout from {url}"
+            except requests.exceptions.RequestException as e:
+                print(f"  [{url}] Request error: {e}")
+                last_error = str(e)
+        else:
+            if attempt < retries - 1:
+                wait = 5 * (attempt + 1)
+                print(f"All servers failed on attempt {attempt + 1}. Retrying in {wait}s...")
+                time.sleep(wait)
+            continue
+        break  # inner loop succeeded
     else:
-        raise RuntimeError("No valid Overpass API response")
+        raise RuntimeError(
+            f"No valid Overpass API response after {retries} attempts. Last error: {last_error}"
+        )
     
     geojson_response = json2geojson(response.json())
     gdf = gpd.GeoDataFrame.from_features(geojson_response, crs=4326).reset_index(

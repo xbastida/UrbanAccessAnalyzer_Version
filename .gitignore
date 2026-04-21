@@ -6,6 +6,27 @@ _build/
 __pycache__/
 *.py[cod]
 *$py.class
+# Geospatial data / big files
+*.geojson
+*.csv
+*.gpkg
+*.html
+*.graphml
+*.osm
+*.pbf
+*.tif
+*.tiff
+*.zip
+*.parquet
+*.geoparquet
+*.nc
+*.hdf5
+*.h5
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
 
 # Virtual environment
 .venv/
@@ -14,25 +35,20 @@ venv/
 # Documentation build files
 docs/build/
 
-# Python egg files
+# Python egg files / build artifacts
 *.egg-info
 dist/
 build/
+UrbanAccessAnalyzer.egg-info/
+
+# Tool caches
+cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
 
 no_sync/
-
-examples 
-scripts 
-
-# # Ignore everything in examples/
-# examples/**
-
-# # BUT include files directly inside examples/ (no subfolders)
-# !examples/*
-# examples/*/
-
-# # Exclude files that start with "local" (both .py and .ipynb or any extension)
-# examples/local*
 
 api_keys.py
 

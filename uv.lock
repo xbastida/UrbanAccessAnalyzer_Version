@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -2753,16 +2753,20 @@ name = "urbanaccessanalyzer"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
+    { name = "folium" },
     { name = "geopandas" },
     { name = "geopy" },
+    { name = "h3" },
+    { name = "mapclassify" },
+    { name = "matplotlib" },
     { name = "networkx" },
     { name = "numpy" },
+    { name = "osm2geojson" },
     { name = "osmnx" },
     { name = "pandas" },
     { name = "polars" },
     { name = "pyarrow" },
     { name = "pycountry" },
-    { name = "pygris" },
     { name = "rapidfuzz" },
     { name = "rasterio", version = "1.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "rasterio", version = "1.5.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
@@ -2771,10 +2775,13 @@ dependencies = [
     { name = "scikit-learn" },
     { name = "shapely" },
     { name = "tqdm" },
-    { name = "us" },
 ]
 
 [package.optional-dependencies]
+census = [
+    { name = "pygris" },
+    { name = "us" },
+]
 dev = [
     { name = "black" },
     { name = "pre-commit" },
@@ -2809,16 +2816,21 @@ plot = [
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.8.0" },
     { name = "contextily", marker = "extra == 'plot'", specifier = ">=1.6.0" },
+    { name = "folium", specifier = ">=0.20.0" },
     { name = "folium", marker = "extra == 'plot'", specifier = ">=0.20.0" },
     { name = "furo", marker = "extra == 'docs'", specifier = ">=2024.8.0" },
     { name = "geopandas", specifier = ">=1.0.0" },
     { name = "geopy", specifier = ">=2.4.1" },
+    { name = "h3", specifier = ">=4.4.2" },
     { name = "h3", marker = "extra == 'h3'", specifier = ">=4.3.1" },
+    { name = "mapclassify", specifier = ">=2.10.0" },
     { name = "mapclassify", marker = "extra == 'plot'", specifier = ">=2.10.0" },
+    { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "matplotlib", marker = "extra == 'plot'", specifier = ">=3.10.7" },
     { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=3.0.1" },
     { name = "networkx", specifier = ">=3.5" },
     { name = "numpy", specifier = ">=1.22" },
+    { name = "osm2geojson", specifier = ">=0.3.1" },
     { name = "osm2geojson", marker = "extra == 'osm'", specifier = ">=0.2.6" },
     { name = "osmnx", specifier = ">=2.0.7" },
     { name = "osmnx", marker = "extra == 'osm'", specifier = ">=2.0.5" },
@@ -2828,7 +2840,7 @@ requires-dist = [
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.2.0" },
     { name = "pyarrow", specifier = ">=18.0.0" },
     { name = "pycountry", specifier = ">=24.6.1" },
-    { name = "pygris", specifier = ">=0.2.1" },
+    { name = "pygris", marker = "extra == 'census'", specifier = ">=0.2.1" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "rapidfuzz", specifier = ">=3.13.0" },
     { name = "rasterio", specifier = ">=1.4.3" },
@@ -2842,9 +2854,9 @@ requires-dist = [
     { name = "streamlit", marker = "extra == 'plot'", specifier = ">=1.50.0" },
     { name = "streamlit-folium", marker = "extra == 'plot'", specifier = ">=0.25.3" },
     { name = "tqdm", specifier = ">=4.0.0" },
-    { name = "us", specifier = ">=3.2.0" },
+    { name = "us", marker = "extra == 'census'", specifier = ">=3.2.0" },
 ]
-provides-extras = ["osm", "h3", "plot", "dev", "docs"]
+provides-extras = ["osm", "h3", "plot", "census", "dev", "docs"]
 
 [[package]]
 name = "urllib3"

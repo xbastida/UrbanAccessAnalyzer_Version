@@ -1,0 +1,9 @@
+[
+  {
+    "N": 70,
+    "W": 0.7,
+    "MIN_POP_PCT": 80,
+    "LAM": 0,
+    "demand_source": "regression",
+    "solver": "SA_area_weighted",
+    "feasible": 
