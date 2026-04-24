@@ -277,6 +277,12 @@ def aggregate(
         else:
             raise Exception("Param h3_column is needed as h3 cell column could not be infered.")
 
+    # Reset any non-trivial index (e.g. osmnx MultiIndex (u, v, key)) so that
+    # subsequent .loc assignments and column selections work correctly on a
+    # plain RangeIndex.
+    if not isinstance(h3_df.index, pd.RangeIndex):
+        h3_df = h3_df.reset_index(drop=True)
+
     if h3_column != "h3_cell": 
         if "h3_cell" in h3_df.columns:
             warnings.warn(f"h3_cell column exists in h3_df. Dropping h3_cell column and renaming {h3_column} to h3_cell.")

@@ -330,10 +330,11 @@ def __exact_isochrones(G, process_order_df, min_edge_length):
     accessibility_values.reverse()
 
     nodes_gdf, edges_gdf = ox.graph_to_gdfs(G)
+    accessibility_values_str = {str(a) for a in accessibility_values}
     remaining_dist_cols = [
         c for c in nodes_gdf.columns
         if (c.startswith("remaining_dist_")
-            and (c.removeprefix("remaining_dist_") in accessibility_values))
+            and (c.removeprefix("remaining_dist_") in accessibility_values_str))
     ]
 
     accessibility_values = [
@@ -380,7 +381,7 @@ def __exact_isochrones(G, process_order_df, min_edge_length):
     nodes_gdf = nodes_gdf.drop(columns=remaining_dist_cols)
 
     max_priority_map = len(accessibility_values)
-    priority_map = {val: str(i) for i, val in enumerate(accessibility_values)}
+    priority_map = {str(val): str(i) for i, val in enumerate(accessibility_values)}
     priority_map_rev = {str(i): val for i, val in enumerate(accessibility_values)}
     priority_map_rev[str(max_priority_map + 1)] = None
 

@@ -80,6 +80,7 @@ def build_or_load_graph(aoi, aoi_download, graph_path, osm_xml_path):
 def accessibility_for_stations(station_path, aoi, graph_path):
     stem = os.path.splitext(os.path.basename(station_path))[0]
     output_path = os.path.join(OUTPUT_DIR, f"{stem}_access.geojson")
+    edges_output_path = os.path.join(OUTPUT_DIR, f"{stem}_accessibility_edges.gpkg")
 
     poi = gpd.read_file(station_path).to_crs(aoi.crs)
     poi = gpd.GeoDataFrame(poi.drop(columns="geometry"), geometry=poi.geometry.centroid, crs=aoi.crs)
@@ -125,6 +126,12 @@ def accessibility_for_stations(station_path, aoi, graph_path):
     out = out.to_crs("EPSG:4326")
     out.to_file(output_path, driver="GeoJSON")
     print(f"  {stem}: {len(out)} hexagons -> {output_path}")
+
+    # Save streets with accessibility values (mirrors green_spaces.ipynb)
+    accessibility_edges = access_edges[access_edges.intersects(aoi.union_all())].copy()
+    accessibility_edges = accessibility_edges.to_crs("EPSG:4326")
+    accessibility_edges.to_file(edges_output_path, driver="GPKG")
+    print(f"  {stem}: {len(accessibility_edges)} edges -> {edges_output_path}")
 
 
 def main():

@@ -1,9 +1,11 @@
 [
   {
     "N": 70,
-    "W": 0.7,
-    "MIN_POP_PCT": 80,
-    "LAM": 0,
+    "W": 0.6,
+    "MIN_POP_PCT": 75,
+    "LAM": 0.3,
     "demand_source": "regression",
-    "solver": "SA_area_weighted",
+    "solver": "SA_decay_saturation",
+    "demand_sigma_m": 250.0,
+    "kernel_cutoff_m": 750.0,
     "feasible": 
